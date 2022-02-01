@@ -2,6 +2,17 @@ pipeline {
     agent none
 
     stages {
+        stage("Init") {
+            agent {
+                docker {
+                    image 'hashicorp/terraform'
+                    args '--entrypoint='
+                }
+            }
+            steps {
+                sh "terraform init --no-color"
+            }
+        }
         stage("Format") {
             agent {
                 docker {
@@ -10,7 +21,7 @@ pipeline {
                 }
             }
             steps {
-                sh "terraform fmt -recursive"
+                sh "terraform fmt -recursive --no-color"
             }
         }
         stage("Validate") {
@@ -21,7 +32,7 @@ pipeline {
                 }
             }
             steps {
-                sh "terraform validate"
+                sh "terraform validate --no-color"
             }
 
         }
