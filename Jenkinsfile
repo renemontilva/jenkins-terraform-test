@@ -10,7 +10,7 @@ pipeline {
                 }
             }
             steps {
-                sh "terraform init --no-color"
+                sh "terraform init -no-color"
             }
         }
         stage("Format") {
@@ -21,7 +21,7 @@ pipeline {
                 }
             }
             steps {
-                sh "terraform fmt -recursive --no-color"
+                sh "terraform fmt -recursive -no-color"
             }
         }
         stage("Validate") {
@@ -32,7 +32,7 @@ pipeline {
                 }
             }
             steps {
-                sh "terraform validate --no-color"
+                sh "terraform validate -no-color"
             }
 
         }
@@ -56,7 +56,7 @@ pipeline {
                 }
             }
             steps {
-                sh "terraform plan --no-color"
+                sh "terraform plan -no-color"
             }
         }
         stage("Cost Estimation") {
