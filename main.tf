@@ -25,7 +25,8 @@ resource "aws_instance" "ec2_test" {
     subnet_id = aws_subnet.subnet.id
 
     metadata_options {
-      http_tokens = "optional"
+      http_endpoint = "enabled"
+      http_tokens = "required"
     }
 
     root_block_device {
