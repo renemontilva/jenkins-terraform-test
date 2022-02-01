@@ -24,6 +24,10 @@ resource "aws_instance" "ec2_test" {
     availability_zone = var.az
     subnet_id = aws_subnet.subnet.id
 
+    metadata_options {
+      http_tokens = "required"
+    }
+
     tags = {
       "Environment" = "Test"
     }
