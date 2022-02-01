@@ -104,7 +104,7 @@ pipeline {
             }
  
             steps {
-                sh "terraform apply -auto-approve plan_${BUILD_TAG}.tfplan"
+                sh "terraform apply -no-color -auto-approve plan_${BUILD_TAG}.tfplan"
             }
         }
 
