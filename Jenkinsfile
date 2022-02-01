@@ -66,16 +66,24 @@ pipeline {
                 }
             }
             steps {
-                sh "terraform plan -no-color"
+                sh '''
+                    terraform plan -no-color -out=plan_${BUILD_TAG}.tfplan
+                '''
+            }
+            post {
+                success {
+                    archiveArtifacts artifacts: '**/*.out', fingerprint: true, followSymlinks: false, onlyIfSuccessful: true
+                }
             }
         }
         stage("Cost Estimation") {
+            
             agent {
                 label 'linux'
             }
                 
             steps {
-                sh "echo 'Estimating costs..."
+                sh "echo 'Estimating costs...' "
             }
         }
         stage("Policy Check") {
@@ -84,16 +92,19 @@ pipeline {
             }
  
             steps {
-                sh "Checking policies ...."
+                sh "echo 'Checking policies ....'"
             }
         }
         stage("Apply") {
             agent {
-                label 'linux'
+                docker {
+                    image 'hashicorp/terraform'
+                    args '--entrypoint='                    
+                }
             }
  
             steps {
-                sh "Applying..."
+                sh "terraform apply -auto-approve plan_${BUILD_TAG}.tfplan"
             }
         }
 
