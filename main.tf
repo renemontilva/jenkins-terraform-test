@@ -28,6 +28,10 @@ resource "aws_instance" "ec2_test" {
       http_tokens = "required"
     }
 
+    root_block_device {
+      encrypted = true
+    }
+
     tags = {
       "Environment" = "Test"
     }
