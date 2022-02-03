@@ -97,7 +97,7 @@ pipeline {
             }
  
             steps {
-                sh "opa eval --data policy/terraform.rego --input plan.json "data.terraform.deny" --format pretty"
+                sh "opa eval --data policy/terraform.rego --input plan.json 'data.terraform.deny' --format pretty"
             }
         }
         stage("Apply") {
