@@ -69,10 +69,13 @@ pipeline {
                 sh '''
                     terraform plan -no-color -out=plan_${BUILD_TAG}.tfplan
                 '''
+                sh '''
+                    terraform show -json plan_${BUILD_TAG}.tfplan > plan.json
+                '''
             }
             post {
                 success {
-                    archiveArtifacts artifacts: '**/*.out', fingerprint: true, followSymlinks: false, onlyIfSuccessful: true
+                    archiveArtifacts artifacts: '**/*.tfplan', fingerprint: true, followSymlinks: false, onlyIfSuccessful: true
                 }
             }
         }
@@ -86,13 +89,15 @@ pipeline {
                 sh "echo 'Estimating costs...' "
             }
         }
-        stage("Policy Check") {
+        stage("Security Policy as Code") {
             agent {
-                label 'linux'
+                docker {
+                    image 'openpolicyagent/opa'
+                }
             }
  
             steps {
-                sh "echo 'Checking policies ....'"
+                sh "opa eval --data policy/terraform.rego --input plan.json "data.terraform.deny" --format pretty"
             }
         }
         stage("Apply") {
