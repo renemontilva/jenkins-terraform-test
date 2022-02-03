@@ -73,11 +73,7 @@ pipeline {
                     terraform show -json plan_${BUILD_TAG}.tfplan > plan.json
                 '''
             }
-            post {
-                success {
-                    archiveArtifacts artifacts: '**/*.tfplan', fingerprint: true, followSymlinks: false, onlyIfSuccessful: true
-                }
-            }
+
         }
         stage("Cost Estimation") {
             
@@ -91,13 +87,19 @@ pipeline {
         }
         stage("Security Policy as Code") {
             agent {
-                docker {
-                    image 'openpolicyagent/opa'
-                }
+                label 'linux'
+                
             }
  
             steps {
-                sh "opa eval --data policy/terraform.rego --input plan.json 'data.terraform.deny' --format pretty"
+                sh "curl -L -o opa https://openpolicyagent.org/downloads/v0.37.1/opa_linux_amd64_static"
+                sh "chmod 755 ./opa"
+                sh "./opa eval --data policy/terraform.rego --input plan.json 'data.terraform.deny' --format pretty"
+            }
+            post {
+                success {
+                    archiveArtifacts artifacts: '**/*.tfplan', fingerprint: true, followSymlinks: false, onlyIfSuccessful: true
+                }
             }
         }
         stage("Apply") {
