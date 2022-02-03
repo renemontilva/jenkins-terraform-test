@@ -8,7 +8,6 @@ import input as tfplan
 allowed_resources = [
     "aws_subnet",
     "aws_instance",
-    "aws_vpc"
 ]
 
 array_contains(arr, elem) {
